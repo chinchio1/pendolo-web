@@ -1,58 +1,58 @@
 <!DOCTYPE html>
-<html lang="it">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Simulazione Pendolo</title>
+  <title>Pendulum Simulation</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100 text-gray-800 font-sans p-6">
   <div class="max-w-5xl mx-auto bg-white shadow-lg rounded-xl p-6 space-y-6">
     <h1 class="text-3xl font-bold text-center text-blue-600">
-      Simulazione Pendolo
+      Pendulum Simulation
     </h1>
 
-    <!-- Controlli -->
+    <!-- Controls -->
     <div id="controls" class="flex flex-wrap gap-4 items-center justify-center">
       <input type="file" id="fileInput" accept=".txt"
              class="block w-60 text-sm text-gray-600 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500" />
 
       <label class="flex items-center gap-2">
-        <span>Passi (n):</span>
-        <input id="nSteps" type="number" value="1000000" min="10000" step="10000"
+        <span>Steps (n):</span>
+        <input id="nSteps" type="number" value="100000" min="100" step="100"
                class="w-28 p-2 border rounded-lg focus:ring-2 focus:ring-blue-500" />
       </label>
 
       <label class="flex items-center gap-2">
-        <span>Gravità g (m/s²):</span>
+        <span>Gravity g (m/s²):</span>
         <input id="gInput" type="number" value="9.80513" step="0.001" class="w-28 p-2 border rounded-lg"/>
       </label>
 
       <label class="flex items-center gap-2">
-        <span>Intervallo Δt (s):</span>
+        <span>Time interval Δt (s):</span>
         <input id="deltatInput" type="number" value="10.0" step="0.01" class="w-28 p-2 border rounded-lg"/>
       </label>
 
       <label class="flex items-center gap-2">
-        <span>Lunghezza pendolo l (m):</span>
+        <span>Pendulum length l (m):</span>
         <input id="lInput" type="number" value="5.0" step="0.01" class="w-28 p-2 border rounded-lg"/>
       </label>
 
       <button id="runBtn"
               class="bg-blue-500 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-600 transition">
-        Avvia simulazione
+        Run Simulation
       </button>
 
       <button id="downloadBtn" disabled
               class="bg-green-500 text-white px-4 py-2 rounded-lg shadow hover:bg-green-600 transition disabled:opacity-50">
-        Scarica output
+        Download Output
       </button>
     </div>
 
-    <!-- Tabella interattiva -->
+    <!-- Interactive Table -->
     <div class="flex flex-col gap-2">
-      <label class="font-semibold">Dati w (opzionale, al posto del file):</label>
+      <label class="font-semibold text-blue-600">Enter w data manually or use a file</label>
       <small class="text-gray-600">
-        Colonne: tau (s), w (Hz), phi (rad), A
+        Columns: tau (s), w (Hz), phi (rad), A
       </small>
       <table id="wTable" class="table-auto border-collapse border border-gray-300 w-full">
         <thead>
@@ -61,26 +61,26 @@
             <th class="border border-gray-300 px-2">w (Hz)</th>
             <th class="border border-gray-300 px-2">phi (rad)</th>
             <th class="border border-gray-300 px-2">A</th>
-            <th class="border border-gray-300 px-2">Azioni</th>
+            <th class="border border-gray-300 px-2">Actions</th>
           </tr>
         </thead>
         <tbody id="wTableBody"></tbody>
       </table>
       <button type="button" id="addRowBtn" class="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 mt-2">
-        Aggiungi riga
+        Add Row
       </button>
     </div>
 
-    <!-- Grafico -->
+    <!-- Chart -->
     <div class="bg-gray-50 p-4 rounded-lg shadow-inner">
       <canvas id="chart" width="900" height="400"></canvas>
     </div>
 
     <!-- Log -->
     <div>
-      <h3 class="text-xl font-semibold mb-2">Log / Avvisi</h3>
+      <h3 class="text-xl font-semibold mb-2">Log / Messages</h3>
       <div id="log" class="bg-gray-800 text-green-200 p-3 rounded-lg font-mono text-sm h-48 overflow-y-auto">
-        Inserisci almeno una riga di dati nella tabella o carica il file w.txt, quindi premi "Avvia simulazione".
+        Enter at least one row in the table or load a w.txt file, then press "Run Simulation".
       </div>
     </div>
   </div>
@@ -89,5 +89,3 @@
   <script src="simulazione.js"></script>
 </body>
 </html>
-
-
