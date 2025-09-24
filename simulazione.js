@@ -40,7 +40,7 @@ function removeRow(btn) {
   tr.remove();
 }
 
-// Inizializza righe
+// Carica righe iniziali
 initialData.forEach(r => addRow(...r));
 
 // Pulsante aggiungi riga
@@ -52,6 +52,7 @@ async function startSimulation() {
   logEl.textContent = '';
   let w_v = [];
 
+  // Legge dati dalla tabella
   for (let row of wTableBody.rows) {
     const tau = Number(row.cells[0].querySelector('input').value);
     const w = Number(row.cells[1].querySelector('input').value) * 2 * Math.PI;
@@ -62,12 +63,13 @@ async function startSimulation() {
     }
   }
 
+  // Se tabella vuota, prova file
   if (w_v.length === 0) {
     const fileInput = document.getElementById('fileInput').files[0];
     if (!fileInput) { alert("Inserisci almeno una riga di dati o carica il file!"); return; }
     const text = await fileInput.text();
     const lines = text.split(/\r?\n/).map(l=>l.trim()).filter(l=>l && !l.startsWith('#'));
-    w_v = lines.map((line, idx)=>{
+    w_v = lines.map((line)=>{
       const parts=line.split(/\s+/);
       const tau=Number(parts[0]), w=Number(parts[1])*2*Math.PI, phi=Number(parts[2]), A=Number(parts[3]);
       return {tau,w,phi,A};
@@ -75,12 +77,14 @@ async function startSimulation() {
   }
 
   const n = Number(document.getElementById('nSteps').value) || 100000;
-  log(`Simulazione con n=${n} passi`);
+  const g = Number(document.getElementById('gInput').value);
+  const deltat = Number(document.getElementById('deltatInput').value);
+  const l = Number(document.getElementById('lInput').value);
+  const dt = deltat / n;
 
-  const deltat = 10.0, dt = deltat/n;
-  const g=9.80513, l=5.0;
+  log(`Simulazione con n=${n}, g=${g}, Δt=${deltat}, l=${l}`);
+
   let t0=0.0, v1=0.0, v2=0.0, th1=0.0, th2=0.0;
-
   for (let i=0;i<w_v.length;i++) v1 += -w_v[i].w*w_v[i].A*Math.cos(w_v[i].phi)/l;
 
   const dati=[], rumore=[];
