@@ -121,10 +121,10 @@ function drawChart(dati, rumore){
   chart=new Chart(ctx,{
     type:'line',
     data:{datasets:[
-      {label:'data (pt)', data:dati, parsing:{xAxisKey:'x',yAxisKey:'y'}, borderColor:'blue', borderWidth:1, pointRadius:0},
-      {label:'base noise (sa)', data:rumore, parsing:{xAxisKey:'x',yAxisKey:'y'}, borderColor:'red', borderWidth:1, pointRadius:0}
+      {label:'Mirror Position', data:dati, parsing:{xAxisKey:'x',yAxisKey:'y'}, borderColor:'blue', borderWidth:1, pointRadius:0},
+      {label:'base noise', data:rumore, parsing:{xAxisKey:'x',yAxisKey:'y'}, borderColor:'red', borderWidth:1, pointRadius:0}
     ]},
-    options:{responsive:true, animation:false, scales:{x:{type:'linear', title:{display:true,text:'Time'}}, y:{title:{display:true,text:'Value'}}}}
+    options:{responsive:true, animation:false, scales:{x:{type:'linear', title:{display:true,text:'Time (s)'}}, y:{title:{display:true,text:'Amplitude (m)'}}}}
   });
 }
 
@@ -139,4 +139,5 @@ function prepareDownload(dati, rumore){
     log("Download started for dati.txt and rumore_base.txt");
   };
 }
+
 
