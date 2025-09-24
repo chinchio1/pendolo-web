@@ -20,7 +20,7 @@
       <!-- Input numero passi -->
       <label class="flex items-center gap-2">
         <span>Passi (n):</span>
-        <input id="nSteps" type="number" value="20000" min="100" step="100"
+        <input id="nSteps" type="number" value="100000" min="100" step="100"
                class="w-28 p-2 border rounded-lg focus:ring-2 focus:ring-blue-500" />
       </label>
 
@@ -37,6 +37,20 @@
       </button>
     </div>
 
+    <!-- Inserimento manuale w.txt -->
+    <div class="flex flex-col gap-2">
+      <label class="font-semibold">Dati w (opzionale, al posto del file):</label>
+      <small class="text-gray-600">
+        Inserisci i dati separati da spazi o tab, una riga per ogni parametro:<br>
+        <code>tau w phi A</code> —<br>
+        tau = tempo di decadimento (s)<br>
+        w = frequenza (Hz)<br>
+        phi = fase (rad)<br>
+        A = ampiezza
+      </small>
+      <textarea id="manualW" rows="5" class="border rounded-lg p-2 w-full"></textarea>
+    </div>
+
     <!-- Grafico -->
     <div class="bg-gray-50 p-4 rounded-lg shadow-inner">
       <canvas id="chart" width="900" height="400"></canvas>
@@ -46,7 +60,7 @@
     <div>
       <h3 class="text-xl font-semibold mb-2">Log / Avvisi</h3>
       <div id="log" class="bg-gray-800 text-green-200 p-3 rounded-lg font-mono text-sm h-48 overflow-y-auto">
-        Carica il file <code>w.txt</code> e premi "Avvia simulazione".
+        Carica il file <code>w.txt</code> o inserisci manualmente i dati e premi "Avvia simulazione".
       </div>
     </div>
   </div>
