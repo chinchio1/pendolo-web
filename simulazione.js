@@ -9,7 +9,7 @@ function log(msg) {
   logEl.scrollTop = logEl.scrollHeight;
 }
 
-// Dati iniziali
+// Initial data
 const initialData = [
   [7.1, 81.6, 0, 1.09e-5],
   [10.7, 68.4, 0, 0.94e-5],
@@ -23,14 +23,14 @@ const initialData = [
   [9.0, 89.2, 0, 0.96e-5]
 ];
 
-function addRow(tau=1, w=10.0, phi=0, A=0.00001) {
+function addRow(tau=8, w=75, phi=0, A=1e-5) {
   const tr = document.createElement('tr');
   tr.innerHTML = `
     <td><input type="number" class="w-full border rounded px-1" value="${tau}"></td>
     <td><input type="number" class="w-full border rounded px-1" value="${w}"></td>
     <td><input type="number" class="w-full border rounded px-1" value="${phi}"></td>
     <td><input type="number" class="w-full border rounded px-1" value="${A}"></td>
-    <td><button type="button" class="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600" onclick="removeRow(this)">Rimuovi</button></td>
+    <td><button type="button" class="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600" onclick="removeRow(this)">Remove</button></td>
   `;
   wTableBody.appendChild(tr);
 }
@@ -40,10 +40,10 @@ function removeRow(btn) {
   tr.remove();
 }
 
-// Carica righe iniziali
+// Load initial rows
 initialData.forEach(r => addRow(...r));
 
-// Pulsante aggiungi riga
+// Add row button
 addRowBtn.addEventListener('click', () => addRow());
 
 document.getElementById('runBtn').addEventListener('click', startSimulation);
@@ -52,7 +52,6 @@ async function startSimulation() {
   logEl.textContent = '';
   let w_v = [];
 
-  // Legge dati dalla tabella
   for (let row of wTableBody.rows) {
     const tau = Number(row.cells[0].querySelector('input').value);
     const w = Number(row.cells[1].querySelector('input').value) * 2 * Math.PI;
@@ -63,10 +62,9 @@ async function startSimulation() {
     }
   }
 
-  // Se tabella vuota, prova file
   if (w_v.length === 0) {
     const fileInput = document.getElementById('fileInput').files[0];
-    if (!fileInput) { alert("Inserisci almeno una riga di dati o carica il file!"); return; }
+    if (!fileInput) { alert("Please enter at least one row or load a file!"); return; }
     const text = await fileInput.text();
     const lines = text.split(/\r?\n/).map(l=>l.trim()).filter(l=>l && !l.startsWith('#'));
     w_v = lines.map((line)=>{
@@ -82,7 +80,7 @@ async function startSimulation() {
   const l = Number(document.getElementById('lInput').value);
   const dt = deltat / n;
 
-  log(`Simulazione con n=${n}, g=${g}, Δt=${deltat}, l=${l}`);
+  log(`Simulation started with n=${n}, g=${g}, Δt=${deltat}, l=${l}`);
 
   let t0=0.0, v1=0.0, v2=0.0, th1=0.0, th2=0.0;
   for (let i=0;i<w_v.length;i++) v1 += -w_v[i].w*w_v[i].A*Math.cos(w_v[i].phi)/l;
@@ -112,7 +110,7 @@ async function startSimulation() {
     v1+=theta_1_dp*dt; v2+=theta_2_dp*dt; th1+=v1*dt; th2+=v2*dt; t0+=dt;
   }
 
-  log("Simulazione completata.");
+  log("Simulation completed.");
   drawChart(dati, rumore);
   prepareDownload(dati, rumore);
 }
@@ -123,10 +121,10 @@ function drawChart(dati, rumore){
   chart=new Chart(ctx,{
     type:'line',
     data:{datasets:[
-      {label:'dati (pt)', data:dati, parsing:{xAxisKey:'x',yAxisKey:'y'}, borderColor:'blue', borderWidth:1, pointRadius:0},
-      {label:'rumore_base (sa)', data:rumore, parsing:{xAxisKey:'x',yAxisKey:'y'}, borderColor:'red', borderWidth:1, pointRadius:0}
+      {label:'data (pt)', data:dati, parsing:{xAxisKey:'x',yAxisKey:'y'}, borderColor:'blue', borderWidth:1, pointRadius:0},
+      {label:'base noise (sa)', data:rumore, parsing:{xAxisKey:'x',yAxisKey:'y'}, borderColor:'red', borderWidth:1, pointRadius:0}
     ]},
-    options:{responsive:true, animation:false, scales:{x:{type:'linear', title:{display:true,text:'Tempo'}}, y:{title:{display:true,text:'Valore'}}}}
+    options:{responsive:true, animation:false, scales:{x:{type:'linear', title:{display:true,text:'Time'}}, y:{title:{display:true,text:'Value'}}}}
   });
 }
 
@@ -138,7 +136,6 @@ function prepareDownload(dati, rumore){
   downloadBtn.onclick=()=>{
     const a1=document.createElement('a'); a1.href=URL.createObjectURL(blob1); a1.download='dati.txt'; document.body.appendChild(a1); a1.click(); a1.remove();
     const a2=document.createElement('a'); a2.href=URL.createObjectURL(blob2); a2.download='rumore_base.txt'; document.body.appendChild(a2); a2.click(); a2.remove();
-    log("Download avviato per dati.txt e rumore_base.txt");
+    log("Download started for dati.txt and rumore_base.txt");
   };
 }
-
