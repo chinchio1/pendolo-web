@@ -11,7 +11,6 @@
       Simulazione Pendolo
     </h1>
 
-    <!-- Controlli -->
     <div id="controls" class="flex flex-wrap gap-4 items-center justify-center">
       <input type="file" id="fileInput" accept=".txt"
              class="block w-60 text-sm text-gray-600 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500" />
@@ -33,7 +32,6 @@
       </button>
     </div>
 
-    <!-- Tabella interattiva -->
     <div class="flex flex-col gap-2">
       <label class="font-semibold">Dati w (opzionale, al posto del file):</label>
       <small class="text-gray-600">
@@ -49,21 +47,17 @@
             <th class="border border-gray-300 px-2">Azioni</th>
           </tr>
         </thead>
-        <tbody id="wTableBody">
-          <!-- Righe iniziali -->
-        </tbody>
+        <tbody id="wTableBody"></tbody>
       </table>
       <button type="button" id="addRowBtn" class="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 mt-2">
         Aggiungi riga
       </button>
     </div>
 
-    <!-- Grafico -->
     <div class="bg-gray-50 p-4 rounded-lg shadow-inner">
       <canvas id="chart" width="900" height="400"></canvas>
     </div>
 
-    <!-- Log -->
     <div>
       <h3 class="text-xl font-semibold mb-2">Log / Avvisi</h3>
       <div id="log" class="bg-gray-800 text-green-200 p-3 rounded-lg font-mono text-sm h-48 overflow-y-auto">
