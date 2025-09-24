@@ -9,32 +9,46 @@ function log(msg) {
 
 document.getElementById('runBtn').addEventListener('click', startSimulation);
 
+function addRow() {
+  const tbody = document.getElementById('wTable').querySelector('tbody');
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td><input type="number" class="w-full border rounded px-1" value="1"></td>
+    <td><input type="number" class="w-full border rounded px-1" value="0.5"></td>
+    <td><input type="number" class="w-full border rounded px-1" value="0"></td>
+    <td><input type="number" class="w-full border rounded px-1" value="1"></td>
+    <td><button type="button" class="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600" onclick="removeRow(this)">Rimuovi</button></td>
+  `;
+  tbody.appendChild(tr);
+}
+
+function removeRow(btn) {
+  const tr = btn.closest('tr');
+  tr.remove();
+}
+
 async function startSimulation() {
   logEl.textContent = '';
 
   let w_v = [];
 
-  // 1️⃣ Legge i dati dalla textarea
-  const manualText = document.getElementById('manualW').value.trim();
-  if (manualText) {
-    const lines = manualText.split(/\r?\n/).filter(l => l && !l.startsWith('#'));
-    w_v = lines.map((line, idx) => {
-      const parts = line.split(/\s+/);
-      if (parts.length < 4) throw new Error(`Linea ${idx+1} non valida: ${line}`);
-      const tau = Number(parts[0]);
-      const w = Number(parts[1]) * 2 * Math.PI;
-      const phi = Number(parts[2]);
-      const A = Number(parts[3]);
-      return { tau, w, phi, A };
-    });
-    log(`Letti ${w_v.length} parametri dalla textarea`);
+  // 1️⃣ Legge i dati dalla tabella
+  const tbody = document.getElementById('wTable').querySelector('tbody');
+  for (let row of tbody.rows) {
+    const tau = Number(row.cells[0].querySelector('input').value);
+    const w = Number(row.cells[1].querySelector('input').value) * 2 * Math.PI;
+    const phi = Number(row.cells[2].querySelector('input').value);
+    const A = Number(row.cells[3].querySelector('input').value);
+    if (!isNaN(tau) && !isNaN(w) && !isNaN(phi) && !isNaN(A)) {
+      w_v.push({ tau, w, phi, A });
+    }
   }
 
-  // 2️⃣ Se textarea vuota, legge dal file
-  else {
+  // 2️⃣ Se tabella vuota, legge dal file
+  if (w_v.length === 0) {
     const fileInput = document.getElementById('fileInput').files[0];
     if (!fileInput) {
-      alert("Carica un file w.txt oppure inserisci i dati manualmente!");
+      alert("Inserisci almeno una riga di dati nella tabella o carica il file w.txt!");
       return;
     }
     const text = await fileInput.text();
@@ -49,21 +63,20 @@ async function startSimulation() {
       return { tau, w, phi, A };
     });
     log(`Letti ${w_v.length} parametri da file`);
+  } else {
+    log(`Letti ${w_v.length} parametri dalla tabella`);
   }
 
   const n = Number(document.getElementById('nSteps').value) || 100000;
   log(`Eseguo simulazione con n = ${n} passi (potrebbe richiedere tempo)`);
 
-  // Parametri
   const deltat = 10.0;
   const dt = deltat / n;
   const g = 9.80513;
   const l = 5.0;
-
   let t0 = 0.0;
   let v1 = 0.0, v2 = 0.0, th1 = 0.0, th2 = 0.0;
 
-  // calcola v1 iniziale come in C++
   for (let i = 0; i < w_v.length; i++) {
     v1 += - w_v[i].w * w_v[i].A * Math.cos(w_v[i].phi) / l;
   }
@@ -71,9 +84,7 @@ async function startSimulation() {
   const dati = [];
   const rumore = [];
 
-  // ciclo di integrazione
   for (let step = 0; step < n; step++) {
-    // calcolo ap
     let ap = 0.0;
     for (let j = 0; j < w_v.length; j++) {
       const p = w_v[j];
@@ -90,7 +101,6 @@ async function startSimulation() {
     const sin1 = Math.sin(th1);
     const sin2 = Math.sin(th2);
 
-    // pt e sa (output)
     let pt = l * sin1 + l * sin2;
     let sa = 0.0;
     for (let j = 0; j < w_v.length; j++) {
@@ -103,7 +113,6 @@ async function startSimulation() {
     dati.push({ x: t0, y: pt });
     rumore.push({ x: t0, y: sa });
 
-    // Derivate angolari
     const theta_2_dp = (v2 * v1 * sin_delta + (ap / l) * cos2 - (g / l) * sin2
         + v1 * (v1 - v2) * sin_delta
         - (cos_delta / 2.0) * (2.0 * (ap / l) * cos1 - 2.0 * (g / l) * sin1 - v1 * v2 * sin_delta + v2 * (v1 - v2) * sin_delta))
@@ -111,7 +120,6 @@ async function startSimulation() {
 
     const theta_1_dp = 0.5 * (2 * (ap / l) * cos1 - 2 * (g / l) * sin1 - v1 * v2 * sin_delta - theta_2_dp * cos_delta + v2 * (v1 - v2) * sin_delta);
 
-    // integrazione
     v1 += theta_1_dp * dt;
     v2 += theta_2_dp * dt;
     th1 += v1 * dt;
@@ -125,7 +133,6 @@ async function startSimulation() {
   prepareDownload(dati, rumore);
 }
 
-// funzione per disegnare con Chart.js
 function drawChart(dati, rumore) {
   const ctx = document.getElementById('chart').getContext('2d');
   if (chart) { chart.destroy(); chart = null; }
@@ -133,59 +140,5 @@ function drawChart(dati, rumore) {
     type: 'line',
     data: {
       datasets: [
-        {
-          label: 'dati (pt)',
-          data: dati,
-          parsing: { xAxisKey: 'x', yAxisKey: 'y' },
-          borderColor: 'blue',
-          borderWidth: 1,
-          pointRadius: 0
-        },
-        {
-          label: 'rumore_base (sa)',
-          data: rumore,
-          parsing: { xAxisKey: 'x', yAxisKey: 'y' },
-          borderColor: 'red',
-          borderWidth: 1,
-          pointRadius: 0
-        }
-      ]
-    },
-    options: {
-      responsive: true,
-      animation: false,
-      scales: {
-        x: { type: 'linear', title: { display: true, text: 'Tempo' } },
-        y: { title: { display: true, text: 'Valore' } }
-      }
-    }
-  });
-}
-
-// prepara i file di testo da scaricare
-function prepareDownload(dati, rumore) {
-  const datiTxt = dati.map(p => `${p.x} ${p.y}`).join('\n');
-  const rumoreTxt = rumore.map(p => `${p.x} ${p.y}`).join('\n');
-
-  const blob1 = new Blob([datiTxt], { type: 'text/plain' });
-  const blob2 = new Blob([rumoreTxt], { type: 'text/plain' });
-
-  downloadBtn.disabled = false;
-  downloadBtn.onclick = () => {
-    const a1 = document.createElement('a');
-    a1.href = URL.createObjectURL(blob1);
-    a1.download = 'dati.txt';
-    document.body.appendChild(a1);
-    a1.click();
-    a1.remove();
-
-    const a2 = document.createElement('a');
-    a2.href = URL.createObjectURL(blob2);
-    a2.download = 'rumore_base.txt';
-    document.body.appendChild(a2);
-    a2.click();
-    a2.remove();
-
-    log("Download avviato per dati.txt e rumore_base.txt");
-  };
-}
+        { label: 'dati (pt)', data: dati, parsing: { xAxisKey: 'x', yAxisKey: 'y' }, borderColor: 'blue', borderWidth: 1, pointRadius: 0 },
+        { label: 'rumore_base (sa)', data: rumore, parsing: { xAxisKey: 'x', yAxisKey: 'y' }, borderColor: 'red', borderWidth
