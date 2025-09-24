@@ -23,7 +23,7 @@ const initialData = [
   [9.0, 8.92, 0, 0.96e-5]
 ];
 
-function addRow(tau=1, w=1 phi=0, A=1e-5) {
+function addRow(tau=8, w=75, phi=0, A=1e-5) {
   const tr = document.createElement('tr');
   tr.innerHTML = `
     <td><input type="number" class="w-full border rounded px-1" value="${tau}"></td>
@@ -139,5 +139,4 @@ function prepareDownload(dati, rumore){
     log("Download started for dati.txt and rumore_base.txt");
   };
 }
-
 
