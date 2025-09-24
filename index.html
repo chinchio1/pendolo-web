@@ -2,13 +2,13 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Pendulum Simulation</title>
+  <title>Sesmic Noise Dumping Simulation</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100 text-gray-800 font-sans p-6">
   <div class="max-w-5xl mx-auto bg-white shadow-lg rounded-xl p-6 space-y-6">
     <h1 class="text-3xl font-bold text-center text-blue-600">
-      Pendulum Simulation
+      Sesmic Noise Dumping Simulation
     </h1>
 
     <!-- Controls -->
@@ -18,7 +18,7 @@
 
       <label class="flex items-center gap-2">
         <span>Steps (n):</span>
-        <input id="nSteps" type="number" value="100000" min="100" step="100"
+        <input id="nSteps" type="number" value="1000000" min="10000" step="10000"
                class="w-28 p-2 border rounded-lg focus:ring-2 focus:ring-blue-500" />
       </label>
 
@@ -33,7 +33,7 @@
       </label>
 
       <label class="flex items-center gap-2">
-        <span>Pendulum length l (m):</span>
+        <span>Pendulum length (one arm) l (m):</span>
         <input id="lInput" type="number" value="5.0" step="0.01" class="w-28 p-2 border rounded-lg"/>
       </label>
 
@@ -50,17 +50,17 @@
 
     <!-- Interactive Table -->
     <div class="flex flex-col gap-2">
-      <label class="font-semibold text-blue-600">Enter w data manually or use a file</label>
+      <label class="font-semibold text-blue-600">Enter w data manually or use a file (if you want to use a file, please remove all data from the table below). </label>
       <small class="text-gray-600">
-        Columns: tau (s), w (Hz), phi (rad), A
+        Columns: decay costant (s), frequency (Hz), phase (rad), Amplitude (m)
       </small>
       <table id="wTable" class="table-auto border-collapse border border-gray-300 w-full">
         <thead>
           <tr class="bg-gray-200">
-            <th class="border border-gray-300 px-2">tau</th>
+            <th class="border border-gray-300 px-2">tau (s)</th>
             <th class="border border-gray-300 px-2">w (Hz)</th>
             <th class="border border-gray-300 px-2">phi (rad)</th>
-            <th class="border border-gray-300 px-2">A</th>
+            <th class="border border-gray-300 px-2">A (m)</th>
             <th class="border border-gray-300 px-2">Actions</th>
           </tr>
         </thead>
@@ -89,3 +89,4 @@
   <script src="simulazione.js"></script>
 </body>
 </html>
+
