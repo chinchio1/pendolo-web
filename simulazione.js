@@ -11,19 +11,19 @@ function log(msg) {
 
 // Initial data (original values)
 const initialData = [
-  [7.1, 81.6, 0, 1.09e-5],
-  [10.7, 68.4, 0, 0.94e-5],
-  [7.8, 85.9, 0, 1.15e-5],
-  [9.5, 57.2, 0, 1.18e-5],
-  [6.5, 79.3, 0, 0.99e-5],
-  [8.6, 73.5, 0, 1.11e-5],
-  [10.3, 66.7, 0, 1.07e-5],
-  [7.4, 88.1, 0, 1.13e-5],
-  [8.0, 55.8, 0, 1.03e-5],
-  [9.0, 89.2, 0, 0.96e-5]
+  [7.1, 8.16, 0, 1.09e-5],
+  [10.7, 6.4, 0, 0.94e-5],
+  [7.8, 8.59, 0, 1.15e-5],
+  [9.5, 5.72, 0, 1.18e-5],
+  [6.5, 7.93, 0, 0.99e-5],
+  [8.6, 7.35, 0, 1.11e-5],
+  [10.3, 6.67, 0, 1.07e-5],
+  [7.4, 8.81, 0, 1.13e-5],
+  [8.0, 5.58, 0, 1.03e-5],
+  [9.0, 8.92, 0, 0.96e-5]
 ];
 
-function addRow(tau=7.1, w=81.6, phi=0, A=1.09e-5) {
+function addRow(tau=1, w=1, phi=0, A=1.0e-5) {
   const tr = document.createElement('tr');
   tr.innerHTML = `
     <td><input type="number" class="w-full border rounded px-1" value="${tau}"></td>
@@ -139,3 +139,4 @@ function prepareDownload(dati, rumore){
     log("Download started for dati.txt and rumore_base.txt");
   };
 }
+
