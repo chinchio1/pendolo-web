@@ -1,5 +1,3 @@
-// simulazione.js
-
 let chart = null;
 const logEl = document.getElementById('log');
 const downloadBtn = document.getElementById('downloadBtn');
@@ -12,28 +10,48 @@ function log(msg) {
 document.getElementById('runBtn').addEventListener('click', startSimulation);
 
 async function startSimulation() {
-  logEl.textContent = ''; // reset log
-  const fileInput = document.getElementById('fileInput').files[0];
-  if (!fileInput) {
-    alert("Carica prima un file w.txt!");
-    return;
+  logEl.textContent = '';
+
+  let w_v = [];
+
+  // 1️⃣ Legge i dati dalla textarea
+  const manualText = document.getElementById('manualW').value.trim();
+  if (manualText) {
+    const lines = manualText.split(/\r?\n/).filter(l => l && !l.startsWith('#'));
+    w_v = lines.map((line, idx) => {
+      const parts = line.split(/\s+/);
+      if (parts.length < 4) throw new Error(`Linea ${idx+1} non valida: ${line}`);
+      const tau = Number(parts[0]);
+      const w = Number(parts[1]) * 2 * Math.PI;
+      const phi = Number(parts[2]);
+      const A = Number(parts[3]);
+      return { tau, w, phi, A };
+    });
+    log(`Letti ${w_v.length} parametri dalla textarea`);
   }
 
-  const text = await fileInput.text();
-  const lines = text.split(/\r?\n/).map(l => l.trim()).filter(l => l && !l.startsWith('#'));
-  const w_v = lines.map((line, idx) => {
-    const parts = line.split(/\s+/);
-    if (parts.length < 4) throw new Error(`Linea ${idx+1} non valida: ${line}`);
-    const tau = Number(parts[0]);
-    const w = Number(parts[1]) * 2 * Math.PI; // nel C++ moltiplicavi per 2*3.14; qui uso 2π
-    const phi = Number(parts[2]);
-    const A = Number(parts[3]);
-    return { tau, w, phi, A };
-  });
+  // 2️⃣ Se textarea vuota, legge dal file
+  else {
+    const fileInput = document.getElementById('fileInput').files[0];
+    if (!fileInput) {
+      alert("Carica un file w.txt oppure inserisci i dati manualmente!");
+      return;
+    }
+    const text = await fileInput.text();
+    const lines = text.split(/\r?\n/).map(l => l.trim()).filter(l => l && !l.startsWith('#'));
+    w_v = lines.map((line, idx) => {
+      const parts = line.split(/\s+/);
+      if (parts.length < 4) throw new Error(`Linea ${idx+1} non valida: ${line}`);
+      const tau = Number(parts[0]);
+      const w = Number(parts[1]) * 2 * Math.PI;
+      const phi = Number(parts[2]);
+      const A = Number(parts[3]);
+      return { tau, w, phi, A };
+    });
+    log(`Letti ${w_v.length} parametri da file`);
+  }
 
-  log(`Letti ${w_v.length} parametri da w.txt`);
-
-  const n = Number(document.getElementById('nSteps').value) || 20000;
+  const n = Number(document.getElementById('nSteps').value) || 100000;
   log(`Eseguo simulazione con n = ${n} passi (potrebbe richiedere tempo)`);
 
   // Parametri
@@ -42,7 +60,6 @@ async function startSimulation() {
   const g = 9.80513;
   const l = 5.0;
 
-  // stato iniziale
   let t0 = 0.0;
   let v1 = 0.0, v2 = 0.0, th1 = 0.0, th2 = 0.0;
 
@@ -56,13 +73,13 @@ async function startSimulation() {
 
   // ciclo di integrazione
   for (let step = 0; step < n; step++) {
-    // calcolo ap (accumulatore forzante)
+    // calcolo ap
     let ap = 0.0;
     for (let j = 0; j < w_v.length; j++) {
       const p = w_v[j];
       const expTerm = Math.exp(-t0 / p.tau);
-      ap += p.A * expTerm * ( (p.w * p.w - 1.0 / (p.tau * p.tau)) * Math.sin(p.w * t0 + p.phi)
-              + 2.0 * (p.w / p.tau) * Math.cos(p.w * t0 + p.phi) );
+      ap += p.A * expTerm * ((p.w * p.w - 1.0 / (p.tau * p.tau)) * Math.sin(p.w * t0 + p.phi)
+              + 2.0 * (p.w / p.tau) * Math.cos(p.w * t0 + p.phi));
     }
 
     const delta = th1 - th2;
@@ -86,7 +103,7 @@ async function startSimulation() {
     dati.push({ x: t0, y: pt });
     rumore.push({ x: t0, y: sa });
 
-    // Derivate angolari come nel tuo C++
+    // Derivate angolari
     const theta_2_dp = (v2 * v1 * sin_delta + (ap / l) * cos2 - (g / l) * sin2
         + v1 * (v1 - v2) * sin_delta
         - (cos_delta / 2.0) * (2.0 * (ap / l) * cos1 - 2.0 * (g / l) * sin1 - v1 * v2 * sin_delta + v2 * (v1 - v2) * sin_delta))
@@ -94,7 +111,7 @@ async function startSimulation() {
 
     const theta_1_dp = 0.5 * (2 * (ap / l) * cos1 - 2 * (g / l) * sin1 - v1 * v2 * sin_delta - theta_2_dp * cos_delta + v2 * (v1 - v2) * sin_delta);
 
-    // integrazione (esplicita come nel C++)
+    // integrazione
     v1 += theta_1_dp * dt;
     v2 += theta_2_dp * dt;
     th1 += v1 * dt;
@@ -145,7 +162,7 @@ function drawChart(dati, rumore) {
   });
 }
 
-// prepara i file di testo da scaricare (dati.txt e rumore_base.txt)
+// prepara i file di testo da scaricare
 function prepareDownload(dati, rumore) {
   const datiTxt = dati.map(p => `${p.x} ${p.y}`).join('\n');
   const rumoreTxt = rumore.map(p => `${p.x} ${p.y}`).join('\n');
@@ -155,7 +172,6 @@ function prepareDownload(dati, rumore) {
 
   downloadBtn.disabled = false;
   downloadBtn.onclick = () => {
-    // creeremo un .zip? per semplicità scarichiamo due file sequenziali
     const a1 = document.createElement('a');
     a1.href = URL.createObjectURL(blob1);
     a1.download = 'dati.txt';
