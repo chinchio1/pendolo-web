@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <title>Simulazione Pendolo - Web</title>
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    canvas { max-width: 100%; }
+    #controls { margin-bottom: 12px; }
+    #log { white-space: pre-wrap; background:#f7f7f7; padding:8px; border-radius:6px; }
+  </style>
+</head>
+<body>
+  <h1>Simulazione Pendolo (JS)</h1>
+
+  <div id="controls">
+    <input type="file" id="fileInput" accept=".txt" />
+    Passi (n): <input id="nSteps" type="number" value="20000" min="100" step="100" />
+    <button id="runBtn">Avvia simulazione</button>
+    <button id="downloadBtn" disabled>Scarica output (.txt)</button>
+  </div>
+
+  <canvas id="chart" width="900" height="400"></canvas>
+
+  <h3>Log / Avvisi</h3>
+  <div id="log">Carica il file <code>w.txt</code> e premi "Avvia simulazione".</div>
+
+  <script src="simulazione.js"></script>
+</body>
+</html>
