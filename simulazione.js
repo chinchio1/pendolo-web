@@ -141,4 +141,36 @@ function drawChart(dati, rumore) {
     data: {
       datasets: [
         { label: 'dati (pt)', data: dati, parsing: { xAxisKey: 'x', yAxisKey: 'y' }, borderColor: 'blue', borderWidth: 1, pointRadius: 0 },
-        { label: 'rumore_base (sa)', data: rumore, parsing: { xAxisKey: 'x', yAxisKey: 'y' }, borderColor: 'red', borderWidth
+        { label: 'rumore_base (sa)', data: rumore, parsing: { xAxisKey: 'x', yAxisKey: 'y' }, borderColor: 'red', borderWidth: 1, pointRadius: 0 }
+      ]
+    },
+    options: { responsive: true, animation: false, scales: { x: { type: 'linear', title: { display: true, text: 'Tempo' } }, y: { title: { display: true, text: 'Valore' } } } }
+  });
+}
+
+function prepareDownload(dati, rumore) {
+  const datiTxt = dati.map(p => `${p.x} ${p.y}`).join('\n');
+  const rumoreTxt = rumore.map(p => `${p.x} ${p.y}`).join('\n');
+
+  const blob1 = new Blob([datiTxt], { type: 'text/plain' });
+  const blob2 = new Blob([rumoreTxt], { type: 'text/plain' });
+
+  downloadBtn.disabled = false;
+  downloadBtn.onclick = () => {
+    const a1 = document.createElement('a');
+    a1.href = URL.createObjectURL(blob1);
+    a1.download = 'dati.txt';
+    document.body.appendChild(a1);
+    a1.click();
+    a1.remove();
+
+    const a2 = document.createElement('a');
+    a2.href = URL.createObjectURL(blob2);
+    a2.download = 'rumore_base.txt';
+    document.body.appendChild(a2);
+    a2.click();
+    a2.remove();
+
+    log("Download avviato per dati.txt e rumore_base.txt");
+  };
+}
