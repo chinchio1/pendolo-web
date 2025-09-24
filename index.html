@@ -6,7 +6,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100 text-gray-800 font-sans p-6">
-  <div class="max-w-4xl mx-auto bg-white shadow-lg rounded-xl p-6 space-y-6">
+  <div class="max-w-5xl mx-auto bg-white shadow-lg rounded-xl p-6 space-y-6">
     <h1 class="text-3xl font-bold text-center text-blue-600">
       Simulazione Pendolo
     </h1>
@@ -37,18 +37,34 @@
       </button>
     </div>
 
-    <!-- Inserimento manuale w.txt -->
+    <!-- Tabella interattiva w.txt -->
     <div class="flex flex-col gap-2">
       <label class="font-semibold">Dati w (opzionale, al posto del file):</label>
       <small class="text-gray-600">
-        Inserisci i dati separati da spazi o tab, una riga per ogni parametro:<br>
-        <code>tau w phi A</code> —<br>
-        tau = tempo di decadimento (s)<br>
-        w = frequenza (Hz)<br>
-        phi = fase (rad)<br>
-        A = ampiezza
+        Inserisci i parametri una riga per volta. Colonne:<br>
+        tau = tempo di decadimento (s), w = frequenza (Hz), phi = fase (rad), A = ampiezza
       </small>
-      <textarea id="manualW" rows="5" class="border rounded-lg p-2 w-full"></textarea>
+      <table id="wTable" class="table-auto border-collapse border border-gray-300 w-full">
+        <thead>
+          <tr class="bg-gray-200">
+            <th class="border border-gray-300 px-2">tau</th>
+            <th class="border border-gray-300 px-2">w (Hz)</th>
+            <th class="border border-gray-300 px-2">phi (rad)</th>
+            <th class="border border-gray-300 px-2">A</th>
+            <th class="border border-gray-300 px-2">Azioni</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><input type="number" class="w-full border rounded px-1" value="1"></td>
+            <td><input type="number" class="w-full border rounded px-1" value="0.5"></td>
+            <td><input type="number" class="w-full border rounded px-1" value="0"></td>
+            <td><input type="number" class="w-full border rounded px-1" value="1"></td>
+            <td><button type="button" class="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600" onclick="removeRow(this)">Rimuovi</button></td>
+          </tr>
+        </tbody>
+      </table>
+      <button type="button" class="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 mt-2" onclick="addRow()">Aggiungi riga</button>
     </div>
 
     <!-- Grafico -->
@@ -60,14 +76,14 @@
     <div>
       <h3 class="text-xl font-semibold mb-2">Log / Avvisi</h3>
       <div id="log" class="bg-gray-800 text-green-200 p-3 rounded-lg font-mono text-sm h-48 overflow-y-auto">
-        Carica il file <code>w.txt</code> o inserisci manualmente i dati e premi "Avvia simulazione".
+        Inserisci almeno una riga di dati nella tabella o carica il file w.txt, quindi premi "Avvia simulazione".
       </div>
     </div>
   </div>
 
   <!-- Script simulazione -->
   <script src="simulazione.js"></script>
-  <!-- Libreria Chart.js per i grafici -->
+  <!-- Libreria Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </body>
 </html>
