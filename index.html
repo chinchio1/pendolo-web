@@ -7,12 +7,16 @@
 </head>
 <body class="bg-gray-100 text-gray-800 font-sans p-6">
   <div class="max-w-5xl mx-auto bg-white shadow-lg rounded-xl p-6 space-y-6">
-    <h1 class="text-3xl font-bold text-center text-blue-600">
+    <h1 class="text-3xl font-bold text-center text-red-600">
       Seismic Noise Dumping Simulation
     </h1>
-    <p class="text-center text-gray-600 mt-2">
-      A web tool to model seismic noise filters used in ground-based laser interferometers. Users can adjust physical parameters and noise components to simulate how a multistage pendulum can be used to dampen seismic disturbances. The system uses a very simple double pendulum with equal masses and equal lengths. For any questions, email me at chinchiofilippo@gmail.com.
-    </p>
+    <h3 class="font-bold text-center text-red-600">
+      A web tool to model seismic noise filters used in ground-based laser interferometers.
+    </h3>
+    <h2 class="text-center text-black-600 mt-2">
+      Users can adjust physical parameters and noise components to simulate how a multistage pendulum can be used to dampen seismic disturbances. The system uses a very simple double pendulum with equal masses and equal lengths. For more insights on how the simulation is structured and to learn something about how we theorise and observe gravitational waves check out my second year bachelor term paper here: <a class="text-blue-600" href="https://chinchio1.github.io/pendolo-web/Introduction_to_Gravitational_Waves_and_Gravitational_Waves_observation%20(7).pdf">Introduction to Gravitational Waves and Gravitational Waves Observation</a>.
+       For any questions, email me at chinchiofilippo@gmail.com.
+    </h2>
 
     <!-- Controls -->
     <div id="controls" class="flex flex-wrap gap-4 items-center justify-center">
@@ -46,14 +50,14 @@
       </button>
 
       <button id="downloadBtn" disabled
-              class="bg-green-500 text-white px-4 py-2 rounded-lg shadow hover:bg-green-600 transition disabled:opacity-50">
+              class="bg-orange-500 text-white px-4 py-2 rounded-lg shadow hover:bg-orange-600 transition disabled:opacity-50">
         Download Output
       </button>
     </div>
 
     <!-- Interactive Table -->
     <div class="flex flex-col gap-2">
-      <label class="font-semibold text-blue-600">Enter noise data manually or use a file (if you want to use the file, please remove all data from the table):</label>
+      <label class="font-semibold text-black-600">Enter noise data manually or use a file (if you want to use the file, please remove all data from the table):</label>
       <small class="text-gray-600">
         Columns: decay constant (s), frequency (Hz), phase (rad), Amplitude (m)
       </small>
@@ -92,5 +96,3 @@
   <script src="simulazione.js"></script>
 </body>
 </html>
-
-
